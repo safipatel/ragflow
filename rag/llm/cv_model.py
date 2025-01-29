@@ -676,7 +676,7 @@ class OpenAI_APICV(GptV4):
         if base_url.split("/")[-1] != "v1":
             base_url = os.path.join(base_url, "v1")
         port_api = os.environ.get('PORTKEY_API_KEY')
-        port_virtual = os.environ.get('PORTKEY_VIRTUAL_CHAT_KEY')
+        port_virtual = os.environ.get('PORTKEY_VIRTUAL_CV_KEY')
         portkey_headers = None
         if port_api and port_virtual:
             portkey_headers = {'x-portkey-api-key': port_api,
