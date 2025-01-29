@@ -146,6 +146,9 @@ class TenantLLMService(CommonService):
             )
 
         if llm_type == LLMType.CHAT.value:
+            if os.environ.get('PORTKEY_API_KEY') is not None:
+                return ChatModel["OpenAI-API-Compatible"](
+                    "xxx", "gemini-2.0-flash-exp", base_url="https://api.portkey.ai/v1")
             if model_config["llm_factory"] not in ChatModel:
                 return
             return ChatModel[model_config["llm_factory"]](
