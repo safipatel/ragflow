@@ -81,15 +81,11 @@ class Base(ABC):
                     resp.choices[0].delta.content = ""
                 ans += resp.choices[0].delta.content
 
-                if not hasattr(resp, "usage") or not resp.usage:
-                    total_tokens = (
-                                total_tokens
-                                + num_tokens_from_string(resp.choices[0].delta.content)
-                        )
-                elif isinstance(resp.usage, dict):
-                    total_tokens = resp.usage.get("total_tokens", total_tokens)
+                tol = self.total_token_count(resp)
+                if not tol:
+                    total_tokens += num_tokens_from_string(resp.choices[0].delta.content)
                 else:
-                    total_tokens = resp.usage.total_tokens
+                    total_tokens = tol
 
                 if resp.choices[0].finish_reason == "length":
                     if is_chinese(ans):
@@ -103,6 +99,16 @@ class Base(ABC):
 
         yield total_tokens
 
+    def total_token_count(self, resp):
+        try:
+            return resp.usage.total_tokens
+        except Exception:
+            pass
+        try:
+            return resp["usage"]["total_tokens"]
+        except Exception:
+            pass
+        return 0
 
 class GptTurbo(Base):
     def __init__(self, key, model_name="gpt-3.5-turbo", base_url="https://api.openai.com/v1"):
