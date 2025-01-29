@@ -36,7 +36,13 @@ LENGTH_NOTIFICATION_EN = "...\nFor the content length reason, it stopped, contin
 class Base(ABC):
     def __init__(self, key, model_name, base_url):
         timeout = int(os.environ.get('LM_TIMEOUT_SECONDS', 600))
-        self.client = OpenAI(api_key=key, base_url=base_url, timeout=timeout)
+        port_api = os.environ.get('PORTKEY_API_KEY')
+        port_virtual = os.environ.get('PORTKEY_VIRTUAL_CHAT_KEY')
+        portkey_headers = None
+        if port_api and port_virtual:
+            portkey_headers = {'x-portkey-api-key': port_api,
+                               'x-portkey-virtual-key': port_virtual }
+        self.client = OpenAI(api_key=key, base_url=base_url, timeout=timeout, default_headers=portkey_headers)
         self.model_name = model_name
 
     def chat(self, system, history, gen_conf):
