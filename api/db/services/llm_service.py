@@ -111,7 +111,7 @@ class TenantLLMService(CommonService):
         mdlnm, fid = TenantLLMService.split_model_name_and_factory(mdlnm)
         if model_config:
             model_config = model_config.to_dict()
-        if not model_config:
+        if not model_config and os.environ.get('PORTKEY_API_KEY') is None:
             if llm_type in [LLMType.EMBEDDING, LLMType.RERANK]:
                 llm = LLMService.query(llm_name=mdlnm) if not fid else LLMService.query(llm_name=mdlnm, fid=fid)
                 if llm and llm[0].fid in ["Youdao", "FastEmbed", "BAAI"]:
