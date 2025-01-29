@@ -675,7 +675,13 @@ class OpenAI_APICV(GptV4):
             raise ValueError("url cannot be None")
         if base_url.split("/")[-1] != "v1":
             base_url = os.path.join(base_url, "v1")
-        self.client = OpenAI(api_key=key, base_url=base_url)
+        port_api = os.environ.get('PORTKEY_API_KEY')
+        port_virtual = os.environ.get('PORTKEY_VIRTUAL_CHAT_KEY')
+        portkey_headers = None
+        if port_api and port_virtual:
+            portkey_headers = {'x-portkey-api-key': port_api,
+                               'x-portkey-virtual-key': port_virtual }
+        self.client = OpenAI(api_key=key, base_url=base_url, default_headers=portkey_headers)
         self.model_name = model_name.split("___")[0]
         self.lang = lang
 
